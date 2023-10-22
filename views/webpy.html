@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>WEBPY</title>
+	<style>
+		* {
+			margin: 0;
+		}
+		
+		body {
+			font-family: sans-serif;
+			width: 100vw;
+			aspect-ratio: 9 / 16;
+			margin: 0
+		}
+		
+		.page {
+			width: 100vw;
+			height: 45%;
+			box-sizing: border-box;
+			padding: 10px;
+		}
+		
+		#text-editor {
+			width: 100%;
+			height: 100%;
+			outline: none;
+			border: none;
+			background: #1C2130;
+			color: #EEEEEE
+		}
+		
+		#output-terminal {
+			width: 100%;
+			height: 100%;
+			outline: none;
+			border: none;
+			background: #303030;
+			color: #EEEEEE
+		}
+		
+		button {
+			position: absolute;
+			top: 0;
+			right: 0;
+			padding: 5px 15px;
+			margin: 5px 15px;
+			border-radius: 5px;
+			border: 1px solid black;
+		}
+		
+		h1 {
+			width: 50%;
+			text-align: center;
+		}
+		
+		
+	</style>
+</head>
+<body>
+	<h1>editor</h1>
+	<button id="compile">run</button>
+	<div class="page editor">
+		<textarea id="text-editor"></textarea>
+	</div>
+	<h1>output</h1>
+	<div class="page output">
+		<textarea id="output-terminal" readonly></textarea>
+	</div>
+	<script src="socket.io/socket.io.js"></script>
+	<script>
+		const editorEl = document.getElementById('text-editor');
+		const terminalEl = document.getElementById('output-terminal');
+		const compileBtn = document.getElementById('compile');
+		
+		const socket = io();
+		
+		let isCompiledOutputDone = true;
+		compileBtn.addEventListener('click',()=>{
+			if(!isCompiledOutputDone)return;
+			let code = editorEl.value;
+			if(code !== ''){
+			  socket.emit('compile',code);
+			}
+		})
+		
+		socket.on('output',output=>{
+			terminalEl.textContent += `> ${output}`
+		})
+		
+	</script>
+</body>
+</html>
